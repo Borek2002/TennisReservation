@@ -8,10 +8,13 @@ class Reservation:
         self.dateAndTimeStart=dateAndTime
         self.courtBookingTime=courtBookingTime
         self.dateAndTimeEnd=dateAndTime+timedelta(minutes=courtBookingTime)
+
     def getDateAndTime(self):
         return self.dateAndTimeStart
+
     def getCourtBookingTime(self):
         return self.courtBookingTime
+
     def printReservation(self):
         print(self.fullName.getFirstname()+" "+self.fullName.getSurname()+" ",end = '')
         print(datetime.strftime(self.dateAndTimeStart, '%d')+"."+datetime.strftime(self.dateAndTimeStart, '%m')+
