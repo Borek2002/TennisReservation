@@ -50,5 +50,15 @@ def validationFilenameAndExtension():
             else:
                 print("Sorry but now only csv format is available. Enter filename and extension again.")
     return inputData
+def validationTimeToBook(hours):
+    print("How long would you like to book court?")
+    for i in range(len(hours)):
+        print(str(i+1)+") "+str(hours[i])+" Minutes")
+    while (True):
+        option=input()
+        if(int(option)<=len(hours)):
+            return int(option)-1
+        else:
+            print("Enter the correct numer of time")
 
 

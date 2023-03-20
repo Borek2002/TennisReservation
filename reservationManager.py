@@ -34,9 +34,12 @@ class ReservationManager:
         print("See You")
 
     def makeReservation(self):
-        newReservation1 = Reservation(Name("d", "b"), datetime.datetime(2022, 2, 13, 15, 15), 60)
-        newReservation2 = Reservation(Name("d", "b"), datetime.datetime(2022, 2, 7, 15, 15), 60)
-        newReservation3 = Reservation(Name("d", "b"), datetime.datetime(2022, 2, 14, 15, 15), 60)
+        newReservation1 = Reservation(Name("d", "b"), datetime.datetime(2023, 4, 13, 15, 00))
+        newReservation1.setCourtTimeAndEndTime(60)
+        newReservation2 = Reservation(Name("d", "b"), datetime.datetime(2023, 4, 7, 15, 15))
+        newReservation2.setCourtTimeAndEndTime(60)
+        newReservation3 = Reservation(Name("d", "b"), datetime.datetime(2023, 4, 14, 15, 15))
+        newReservation3.setCourtTimeAndEndTime(60)
         self.addReservation(newReservation1)
         self.addReservation(newReservation2)
         self.addReservation(newReservation3)
@@ -46,9 +49,12 @@ class ReservationManager:
         dateStart, timeStart = validationInput.validationDateAndTime()
         newReservation = Reservation(Name(fullname[0], fullname[1]),
                                      datetime.datetime(int(dateStart[2]), int(dateStart[1]), int(dateStart[0]), int(timeStart[0]),
-                                                       int(timeStart[1])), 60)
+                                                       int(timeStart[1])))
         reservationOutput = self.checkReservation(newReservation)
         if (reservationOutput == 0):
+            time=self.availableTime(newReservation)
+            index=validationInput.validationTimeToBook(time)
+            newReservation.setCourtTimeAndEndTime(time[index])
             self.addReservation(newReservation)
             print("Successful reservation")
         elif (reservationOutput == 1):
@@ -65,7 +71,7 @@ class ReservationManager:
         date, time = validationInput.validationDateAndTime()
         cancelReservation = Reservation(Name(fullname[0], fullname[1]),
                                      datetime.datetime(int(date[2]), int(date[1]), int(date[0]), int(time[0]),
-                                                       int(time[1])), 60)
+                                                       int(time[1])))
         exepction = self.findReservationToCancel(cancelReservation)
         if (exepction == 1):
             print("You don't have reservation at this time")
@@ -109,6 +115,25 @@ class ReservationManager:
             i += 1
         if (i == len(self.reservations)):
             self.reservations.append(reservation)
+
+    def availableTime(self,reservation):
+        i = 0
+        hours=[]
+        while (i != len(self.reservations)):
+            if reservation.getDateAndTime() < self.reservations[i].getDateAndTime():
+                break
+            i += 1
+        if (i+1 == len(self.reservations)):
+            odd= datetime.timedelta(minutes=90)
+        else:
+            odd=self.reservations[i].getDateAndTime()-reservation.getDateAndTime()
+        if(odd.seconds>=30*60):
+            hours.append(30)
+        if(odd.seconds>=60*60):
+            hours.append(60)
+        if(odd.seconds>=90*60):
+            hours.append(90)
+        return hours
 
     def checkReservation(self, reservation):
         exception = self.check2ReservationInWeek(reservation)

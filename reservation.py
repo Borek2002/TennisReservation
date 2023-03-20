@@ -3,11 +3,17 @@ from datetime import datetime
 
 from name import Name
 class Reservation:
-    def __init__(self,name,dateAndTime,courtBookingTime):
+    dateAndTimeEnd = None
+    courtBookingTime = None
+    def __init__(self,name,dateAndTime):
         self.fullName=name
         self.dateAndTimeStart=dateAndTime
-        self.courtBookingTime=courtBookingTime
-        self.dateAndTimeEnd=dateAndTime+timedelta(minutes=courtBookingTime)
+
+
+
+    def setCourtTimeAndEndTime(self,minutes):
+        self.courtBookingTime=minutes
+        self.dateAndTimeEnd=self.dateAndTimeStart+timedelta(minutes=minutes)
 
     def getDateAndTime(self):
         return self.dateAndTimeStart
