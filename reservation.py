@@ -12,6 +12,9 @@ class Reservation:
     def getDateAndTime(self):
         return self.dateAndTimeStart
 
+    def getDateAndTimeEnd(self):
+        return self.dateAndTimeEnd
+
     def getCourtBookingTime(self):
         return self.courtBookingTime
 

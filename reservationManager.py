@@ -1,4 +1,7 @@
 import datetime
+
+import validationInput
+from csvFile import csvFile
 from reservation import Reservation
 from name import Name
 
@@ -11,8 +14,8 @@ class ReservationManager:
     def startProgram(self):
         print("Welcome to the court reservation system.")
         print("Write below command to move on. Commands:")
-        print(
-            "Commands: \n - Make a reservation \n - Cancel a reservation \n - Print schedule \n - Save schedule to a file \n - Exit")
+        print( "Commands: \n - Make a reservation \n - Cancel a reservation \n - Print schedule \
+            \n - Save schedule to a file \n - Exit")
         self.command = input()
         while (self.command != "Exit"):
             if (self.command == "Make a reservation"):
@@ -20,13 +23,13 @@ class ReservationManager:
             elif (self.command == "Cancel a reservation"):
                 self.cancelReservation()
             elif (self.command == "Print schedule"):
-                self.printSchedule(datetime.datetime(2022, 2, 6, 15, 15),datetime.datetime(2022, 2, 15, 15, 15))
+                self.printSchedule()
             elif (self.command == "Save schedule to a file"):
-                print("save")
+                self.saveSchedule()
             else:
                 print("Invalid command")
-            print(
-                "Commands: \n - Make a reservation \n - Cancel a reservation \n - Print schedule \n - Save schedule to a file \n - Exit")
+            print( "Commands: \n - Make a reservation \n - Cancel a reservation \n - Print schedule \
+                \n - Save schedule to a file \n - Exit")
             self.command = input()
         print("See You")
 
@@ -38,11 +41,9 @@ class ReservationManager:
         self.addReservation(newReservation2)
         self.addReservation(newReservation3)
         print("What's your Name?")
-        fullname = input().split()
+        fullname = validationInput.validationName()
         print("When would you like to book? {DD.MM.YYYY HH:MM}")
-        dateAndTimeStart = input().split()
-        dateStart = dateAndTimeStart[0].split(".")
-        timeStart = dateAndTimeStart[1].split(":")
+        dateStart, timeStart = validationInput.validationDateAndTime()
         newReservation = Reservation(Name(fullname[0], fullname[1]),
                                      datetime.datetime(int(dateStart[2]), int(dateStart[1]), int(dateStart[0]), int(timeStart[0]),
                                                        int(timeStart[1])), 60)
@@ -51,11 +52,53 @@ class ReservationManager:
             self.addReservation(newReservation)
             print("Successful reservation")
         elif (reservationOutput == 1):
-            print("You can't reserve tennise court more than 2 times a week")
+            print("You can't reserve tennis court more than 2 times a week")
         elif (reservationOutput == 2):
             print("The given date is not available")
         elif (reservationOutput == 3):
             print("It's to late to reserve court")
+
+    def cancelReservation(self):
+        print("What's your Name?")
+        fullname = validationInput.validationName()
+        print("Enter the date you want cancel {DD.MM.YYYY HH:MM}")
+        date, time = validationInput.validationDateAndTime()
+        cancelReservation = Reservation(Name(fullname[0], fullname[1]),
+                                     datetime.datetime(int(date[2]), int(date[1]), int(date[0]), int(time[0]),
+                                                       int(time[1])), 60)
+        exepction = self.findReservationToCancel(cancelReservation)
+        if (exepction == 1):
+            print("You don't have reservation at this time")
+            return
+        exepction = self.lessThan1Hour(cancelReservation)
+        if (exepction == 3):
+            print("It's to late to cancel a reservation")
+            return
+        if(exepction==0):
+            print("You canceled your reservation")
+
+    def printSchedule(self):
+        print("Enter the start date {DD.MM.YYYY}")
+        start = validationInput.validationDate()
+        print("Enter the end date {DD.MM.YYYY}")
+        end = validationInput.validationDate()
+        dateStart=datetime.datetime(int(start[2]),int(start[1]),int(start[0]),0,0)
+        dateEnd=datetime.datetime(int(end[2]),int(end[1]),int(end[0]),23,59)
+        for i in range(len(self.reservations)):
+            if ((dateStart <= self.reservations[i].getDateAndTime()) &
+                    (dateEnd >= self.reservations[i].getDateAndTime())):
+                self.reservations[i].printReservation()
+
+    def saveSchedule(self):
+        print("Enter the start date {DD.MM.YYYY}")
+        dateStart = validationInput.validationDate()
+        print("Enter the end date {DD.MM.YYYY}")
+        dateEnd = validationInput.validationDate()
+        print("Enter the file name and extension")
+        input = validationInput.validationFilenameAndExtension()
+        if(input[1]=="csv"):
+            csvFile.saveToCSVFile(self.reservations,input[0],datetime.datetime(int(dateStart[2]),int(dateStart[1]),int(dateStart[0]),0,0),
+                                  datetime.datetime(int(dateEnd[2]),int(dateEnd[1]),int(dateEnd[0]),23,59))
 
     def addReservation(self, reservation):
         i = 0
@@ -76,6 +119,8 @@ class ReservationManager:
             return exception
         exception = self.lessThan1Hour(reservation)
         if (exception == 3):
+            return exception
+        if(exception==0):
             return exception
 
     def check2ReservationInWeek(self, reservation):
@@ -113,27 +158,6 @@ class ReservationManager:
             return 3
         return 0
 
-    def cancelReservation(self):
-        print("What's your Name?")
-        fullname = input().split()
-        print("Enter the date you want cancel {DD.MM.YYYY HH:MM}")
-        dateAndTime = input().split()
-        date = dateAndTime[0].split(".")
-        time = dateAndTime[1].split(":")
-        cancelReservation = Reservation(Name(fullname[0], fullname[1]),
-                                     datetime.datetime(int(date[2]), int(date[1]), int(date[0]), int(time[0]),
-                                                       int(time[1])), 60)
-        exepction = self.findReservationToCancel(cancelReservation)
-        if (exepction == 1):
-            print("You don't have reservation at this time")
-            return
-        exepction = self.lessThan1Hour(cancelReservation)
-        if (exepction == 3):
-            print("It's to late to cancel a reservation")
-            return
-        if(exepction==0):
-            print("You canceled your reservation")
-
     def findReservationToCancel(self, reservation):
         for i in range(len(self.reservations)):
             if (self.reservations[i].getDateAndTime() == reservation.getDateAndTime()) & \
@@ -142,12 +166,6 @@ class ReservationManager:
                 self.reservations.pop(i)
                 return 0
         return 1
-
-    def printSchedule(self,dateStart,dateEnd):
-        for i in range(len(self.reservations)):
-            if ((dateStart <= self.reservations[i].getDateAndTime()) &
-                    (dateEnd >= self.reservations[i].getDateAndTime())):
-                self.reservations[i].printReservation()
 
     def deleteOldReservation(self):
         currentdate = datetime.datetime.now()
