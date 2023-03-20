@@ -1,7 +1,5 @@
 
 
-
-
 def validationName():
     check=False
     fullName=None
