@@ -35,15 +35,6 @@ class ReservationManager:
         print("See You")
 
     def makeReservation(self):
-        newReservation1 = Reservation(Name("d", "b"), datetime.datetime(2022, 4, 13, 15, 00))
-        newReservation1.setCourtTimeAndEndTime(60)
-        newReservation2 = Reservation(Name("d", "b"), datetime.datetime(2023, 4, 7, 15, 15))
-        newReservation2.setCourtTimeAndEndTime(60)
-        newReservation3 = Reservation(Name("d", "b"), datetime.datetime(2023, 4, 14, 15, 15))
-        newReservation3.setCourtTimeAndEndTime(60)
-        self.addReservation(newReservation1)
-        self.addReservation(newReservation2)
-        self.addReservation(newReservation3)
         print("What's your Name?")
         fullname = validationInput.validationName()
         print("When would you like to book? {DD.MM.YYYY HH:MM}")
