@@ -1,6 +1,6 @@
 # TennisReservation
 Damian Borczak <br />
-![image](https://user-images.githubusercontent.com/105941239/226572535-8490b1d2-8d35-423f-839a-16bddb11130c.png)
+![image](https://user-images.githubusercontent.com/105941239/226572535-8490b1d2-8d35-423f-839a-16bddb11130c.png)<br />
 To start the program, enter the command given in the console.
 -Make a reservation:<br />
 ![image](https://user-images.githubusercontent.com/105941239/226573646-d9ee24a2-c8f1-4a59-968c-3792cdb553a0.png)<br />
