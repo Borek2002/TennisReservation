@@ -28,13 +28,14 @@ class ReservationManager:
                 self.saveSchedule()
             else:
                 print("Invalid command")
+            self.deleteOldReservation()
             print( "Commands: \n - Make a reservation \n - Cancel a reservation \n - Print schedule \
                 \n - Save schedule to a file \n - Exit")
             self.command = input()
         print("See You")
 
     def makeReservation(self):
-        newReservation1 = Reservation(Name("d", "b"), datetime.datetime(2023, 4, 13, 15, 00))
+        newReservation1 = Reservation(Name("d", "b"), datetime.datetime(2022, 4, 13, 15, 00))
         newReservation1.setCourtTimeAndEndTime(60)
         newReservation2 = Reservation(Name("d", "b"), datetime.datetime(2023, 4, 7, 15, 15))
         newReservation2.setCourtTimeAndEndTime(60)
@@ -123,7 +124,7 @@ class ReservationManager:
             if reservation.getDateAndTime() < self.reservations[i].getDateAndTime():
                 break
             i += 1
-        if (i+1 == len(self.reservations)):
+        if (i == len(self.reservations)):
             odd= datetime.timedelta(minutes=90)
         else:
             odd=self.reservations[i].getDateAndTime()-reservation.getDateAndTime()
@@ -194,8 +195,10 @@ class ReservationManager:
 
     def deleteOldReservation(self):
         currentdate = datetime.datetime.now()
+        indexToDelete=[]
         for i in range(len(self.reservations)):
             if self.reservations[i].getDateAndTime()<currentdate:
-                self.reservations.pop(i)
-
+                indexToDelete.append(i)
+        for i in indexToDelete:
+            self.reservations.pop(i)
 
